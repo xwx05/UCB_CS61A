@@ -77,7 +77,7 @@ def nearest_prime(n):
     23
     """
     k = 0
-    while True:
+    while True:  # k 的变化为 0, 1, -1, 2, -2, 3, -3，因此将会先找到更大的nearest prime
         if is_prime(n + k):
             return n + k
         if k > 0:
