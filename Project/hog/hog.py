@@ -248,7 +248,6 @@ def make_averaged(original_function, times_called=1000):
     >>> averaged_dice(1, dice)  # The avg of 10 4's, 10 2's, 10 5's, and 10 1's
     3.0
     """
-
     # BEGIN PROBLEM 8
     def averaged(*args):
         sum = 0
@@ -322,7 +321,10 @@ def boar_strategy(score, opponent_score, threshold=11, num_rolls=6):
     points, and returns NUM_ROLLS otherwise. Ignore the Sus Fuss rule.
     """
     # BEGIN PROBLEM 10
-    return num_rolls  # Remove this line once implemented.
+    if boar_brawl(score, opponent_score) >= threshold:
+        return 0
+    else:
+        return num_rolls
     # END PROBLEM 10
 
 
@@ -331,7 +333,10 @@ def sus_strategy(score, opponent_score, threshold=11, num_rolls=6):
     THRESHOLD points, and returns NUM_ROLLS otherwise. Consider both the Boar Brawl and
     Suss Fuss rules."""
     # BEGIN PROBLEM 11
-    return num_rolls  # Remove this line once implemented.
+    if sus_points(score + boar_brawl(score, opponent_score)) - score >= threshold:
+        return 0
+    else:
+        return num_rolls  # Remove this line once implemented.
     # END PROBLEM 11
 
 
