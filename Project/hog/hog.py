@@ -250,7 +250,6 @@ def make_averaged(original_function, times_called=1000):
     """
 
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
     def averaged(*args):
         sum = 0
         for i in range(times_called):
