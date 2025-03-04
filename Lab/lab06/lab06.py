@@ -6,7 +6,7 @@ class Transaction:
 
     def changed(self):
         """Return whether the transaction resulted in a changed balance."""
-        "*** YOUR CODE HERE ***"
+        return self.before != self.after
 
     def report(self):
         """Return a string describing the transaction.
@@ -20,7 +20,11 @@ class Transaction:
         """
         msg = 'no change'
         if self.changed():
-            "*** YOUR CODE HERE ***"
+            if self.after > self.before:
+                msg = 'increased'
+            else:
+                msg = 'decreased'
+            return str(self.id) + ': ' + msg + ' ' + str(self.before) + '->' + str(self.after)
         return str(self.id) + ': ' + msg
 
 class BankAccount:
@@ -64,24 +68,33 @@ class BankAccount:
 
     # *** YOU NEED TO MAKE CHANGES IN SEVERAL PLACES IN THIS CLASS ***
 
-    def __init__(self, account_holder):
+    def __init__(self, account_holder, transactions = None):
         self.balance = 0
         self.holder = account_holder
+        self.transactions = transactions if transactions else []
 
     def deposit(self, amount):
         """Increase the account balance by amount, add the deposit
         to the transaction history, and return the new balance.
         """
+        before = self.balance
         self.balance = self.balance + amount
+        transaction = Transaction(len(self.transactions), before, self.balance)
+        self.transactions.append(transaction)
         return self.balance
 
     def withdraw(self, amount):
         """Decrease the account balance by amount, add the withdraw
         to the transaction history, and return the new balance.
         """
+        before = self.balance
         if amount > self.balance:
+            transaction = Transaction(len(self.transactions), before, self.balance)
+            self.transactions.append(transaction)
             return 'Insufficient funds'
         self.balance = self.balance - amount
+        transaction = Transaction(len(self.transactions), before, self.balance)
+        self.transactions.append(transaction)
         return self.balance
 
 
@@ -108,14 +121,14 @@ class Server:
         """Append the email to the inbox of the client it is addressed to.
             email is an instance of the Email class.
         """
-        ____.inbox.append(email)
+        self.clients[email.recipient_name].inbox.append(email)  # 添加邮件到接受者（client）的收件箱列表中
 
     def register_client(self, client):
         """Add a client to the clients mapping (which is a 
         dictionary from client names to client instances).
             client is an instance of the Client class.
         """
-        ____[____] = ____
+        self.clients[client.name] = client
 
 class Client:
     """A client has a server, a name (str), and an inbox (list).
@@ -138,11 +151,11 @@ class Client:
         self.inbox = []
         self.server = server
         self.name = name
-        server.register_client(____)
+        server.register_client(self)
 
     def compose(self, message, recipient_name):
         """Send an email with the given message to the recipient."""
-        email = Email(message, ____, ____)
+        email = Email(message, self, recipient_name)
         self.server.send(email)
 
 
@@ -175,16 +188,16 @@ class Mint:
     >>> dime.worth()     # 20 cents + (155 - 50 years)
     125
     """
-    present_year = 2024
+    present_year = 2024  # 造币厂现在的时间，类属性
 
     def __init__(self):
-        self.update()
+        self.update()  # 在创建 Mint 类的实例时，会调用 update 方法，将实例的 year 属性设置为当前的 Mint.present_year
 
     def create(self, coin):
-        "*** YOUR CODE HERE ***"
+        return coin(self.year)  # 接受一个 coin 类作为入参，返回一个该年份的 coin 实例
 
     def update(self):
-        "*** YOUR CODE HERE ***"
+        self.year = Mint.present_year
 
 class Coin:
     cents = None # will be provided by subclasses, but not by Coin itself
@@ -193,7 +206,7 @@ class Coin:
         self.year = year
 
     def worth(self):
-        "*** YOUR CODE HERE ***"
+        return self.cents + max(0, Mint.present_year - self.year - 50)
 
 class Nickel(Coin):
     cents = 5
